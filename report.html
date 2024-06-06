@@ -6,7 +6,15 @@
 <script>
     const income = {{ income }};
     const expense = {{ expense }};
+    const budgetIncome = {{ budget_income }};
+    const budgetExpense = {{ budget_expense }};
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='chart.js') }}"></script>
+
+<h2>Budget vs Actual</h2>
+<p>Budgeted Income: {{ budget_income }}</p>
+<p>Actual Income: {{ income }}</p>
+<p>Budgeted Expense: {{ budget_expense }}</p>
+<p>Actual Expense: {{ expense }}</p>
 {% endblock %}
