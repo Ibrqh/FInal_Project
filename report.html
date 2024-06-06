@@ -8,6 +8,8 @@
     const expense = {{ expense }};
     const budgetIncome = {{ budget_income }};
     const budgetExpense = {{ budget_expense }};
+    const categories = {{ category_expenses.keys()|list }};
+    const categoryExpenses = {{ category_expenses.values()|list }};
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='chart.js') }}"></script>
@@ -17,4 +19,29 @@
 <p>Actual Income: {{ income }}</p>
 <p>Budgeted Expense: {{ budget_expense }}</p>
 <p>Actual Expense: {{ expense }}</p>
+
+<h2>Category-wise Expenses</h2>
+<canvas id="categoryExpenseChart"></canvas>
+<script>
+    const ctx = document.getElementById('categoryExpenseChart').getContext('2d');
+    const categoryExpenseChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: categories,
+            datasets: [{
+                label: 'Category Expenses',
+                data: categoryExpenses,
+                backgroundColor: '#ff6384',
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            }
+        }
+    });
+</script>
 {% endblock %}
