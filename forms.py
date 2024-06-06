@@ -26,3 +26,8 @@ class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+class BudgetForm(FlaskForm):
+    category = SelectField('Category', choices=[('income', 'Income'), ('expense', 'Expense')], validators=[DataRequired()])
+    amount = FloatField('Amount', validators=[DataRequired()])
+    submit = SubmitField('Set Budget')
