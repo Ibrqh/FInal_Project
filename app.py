@@ -2,8 +2,8 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from forms import TransactionForm, EditTransactionForm, RegistrationForm, LoginForm
-from models import db, Transaction, User
+from forms import TransactionForm, EditTransactionForm, RegistrationForm, LoginForm, BudgetForm
+from models import db, Transaction, User, Budget
 from auth import auth as auth_blueprint
 import os
 
@@ -81,13 +81,38 @@ def delete_transaction(id):
     flash('Transaction deleted successfully!')
     return redirect(url_for('index'))
 
+@app.route('/budget', methods=['GET', 'POST'])
+@login_required
+def budget():
+    form = BudgetForm()
+    if form.validate_on_submit():
+        new_budget = Budget(
+            category=form.category.data,
+            amount=form.amount.data,
+            user_id=current_user.id
+        )
+        db.session.add(new_budget)
+        db.session.commit()
+        flash('Budget set successfully!')
+        return redirect(url_for('budget'))
+    budgets = Budget.query.filter_by(user_id=current_user.id).all()
+    return render_template('budget.html', form=form, budgets=budgets)
+
 @app.route('/report')
 @login_required
 def report():
     transactions = Transaction.query.filter_by(user_id=current_user.id).all()
     income = sum(t.amount for t in transactions if t.category == 'income')
     expense = sum(t.amount for t in transactions if t.category == 'expense')
-    return render_template('report.html', transactions=transactions, income=income, expense=expense)
+
+    budgets = Budget.query.filter_by(user_id=current_user.id).all()
+    budget_dict = {b.category: b.amount for b in budgets}
+
+    budget_income = budget_dict.get('income', 0)
+    budget_expense = budget_dict.get('expense', 0)
+
+    return render_template('report.html', transactions=transactions, income=income, expense=expense,
+                           budget_income=budget_income, budget_expense=budget_expense)
 
 if __name__ == '__main__':
     app.run(debug=True)
