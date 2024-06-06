@@ -1,13 +1,18 @@
-from flask import Blueprint, render_template, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User
 from forms import RegistrationForm, LoginForm
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/register', methods=['GET', 'POST'])
+@login_required
 def register():
+    if current_user.role != 'admin':
+        flash('Only admins can register new users.')
+        return redirect(url_for('index'))
+
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
