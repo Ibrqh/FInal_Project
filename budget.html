@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Set Budget</h1>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.category.label }}<br>
+        {{ form.category() }}
+    </p>
+    <p>
+        {{ form.amount.label }}<br>
+        {{ form.amount(size=32) }}
+    </p>
+    <p><button type="submit">Set Budget</button></p>
+</form>
+
+<h2>Current Budgets</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for budget in budgets %}
+        <tr>
+            <td>{{ budget.category }}</td>
+            <td>{{ budget.amount }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
