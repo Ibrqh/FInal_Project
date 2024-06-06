@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Admin Panel</h1>
+<h2>Manage Users</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Can Add Transactions</th>
+            <th>Can Edit Transactions</th>
+            <th>Can Delete Transactions</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.can_add_transactions }}</td>
+            <td>{{ user.can_edit_transactions }}</td>
+            <td>{{ user.can_delete_transactions }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('update_permissions', user_id=user.id) }}">
+                    {{ form.hidden_tag() }}
+                    <input type="checkbox" name="can_add_transactions" {% if user.can_add_transactions %}checked{% endif %}> Add
+                    <input type="checkbox" name="can_edit_transactions" {% if user.can_edit_transactions %}checked{% endif %}> Edit
+                    <input type="checkbox" name="can_delete_transactions" {% if user.can_delete_transactions %}checked{% endif %}> Delete
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
